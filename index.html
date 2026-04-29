@@ -1325,6 +1325,14 @@
     margin-top: 12px;
   }
   .audio-inline-host.active { display: block; }
+  .audio-inline-host.stealth {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+  }
   .audio-inline-host iframe,
   .audio-inline-host audio {
     width: 100%;
@@ -5057,13 +5065,13 @@ let currentAudioId = null;
 const AUDIO_LINKS = {
   cengi: {
     name: '"Cəngi" — Üzeyir Hacıbəyli',
-    type: 'iframe',
-    src: 'https://mp3.big.az/ajax.php?id=330635&go=7&lk=K61Krcwsis9ITM5MSq3ML4vXjU9OzUvPjC8vL9dLykzXS6zSyy0wBgA%7E&mh=8918d224ed7de41c12a91b99514535f9&mr=1777398694&hs=157ff1d5dd4a28452c175b0f059107e3'
+    type: 'audio',
+    src: './audio/Uzeyir_Hacibeyov_Cengi.mp3'
   },
   bethoven5: {
     name: '"5-ci simfoniya, 1-ci hissə" — Lüdviq van Bethoven',
-    type: 'iframe',
-    src: 'https://mp3.big.az/ajax.php?id=618228&go=7&lk=S0w3NDUyNjExMze2jE8xMUyxSE6xtEjTyy0wBgA%7E&mh=91e7c54f55f0d4be6d1cf69bf6bc4477&mr=1777398631&hs=02b1513a68d5d40a1288cc44d49c1caa'
+    type: 'audio',
+    src: './audio/Beethoven-5th-symphony-piano.mp3'
   }
 };
 
@@ -5080,6 +5088,7 @@ function clearAudioHost() {
 
   host.innerHTML = '';
   host.classList.remove('active');
+  host.classList.remove('stealth');
 }
 
 function resetAudioUI() {
@@ -5090,7 +5099,7 @@ function resetAudioUI() {
 
   if (playBtn) playBtn.classList.remove('playing');
   if (playIcon) playIcon.textContent = 'DİNLƏ';
-  if (status) status.textContent = 'Səs burada avtomatik başladılacaq';
+  if (status) status.textContent = 'Səsi dinləmək üçün düyməyə basın';
   if (barFill) barFill.style.width = '0%';
 }
 
@@ -5120,10 +5129,10 @@ function toggleAudio(trackId) {
 
   if (playBtn) playBtn.classList.add('playing');
   if (playIcon) playIcon.textContent = 'DAYAN';
-  if (status) status.textContent = `${track.name} səsləndirilir`;
+  if (status) status.textContent = 'Səs səsləndirilir';
   if (barFill) barFill.style.width = '100%';
 
-  host.classList.add('active');
+  host.classList.add('active', 'stealth');
 
   if (track.type === 'iframe') {
     host.innerHTML = `<iframe src="${track.src}" title="${track.name}" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
@@ -5132,7 +5141,6 @@ function toggleAudio(trackId) {
 
   const audio = document.createElement('audio');
   audio.id = 'inlineAudioElement';
-  audio.controls = true;
   audio.autoplay = true;
   audio.preload = 'none';
   audio.src = track.src;
@@ -5142,13 +5150,13 @@ function toggleAudio(trackId) {
   audio.addEventListener('pause', () => {
     if (currentAudioId === trackId && !audio.ended) {
       if (playIcon) playIcon.textContent = 'DİNLƏ';
-      if (status) status.textContent = `${track.name} dayandırıldı`;
+      if (status) status.textContent = 'Səs dayandırıldı';
       if (playBtn) playBtn.classList.remove('playing');
     }
   });
   audio.addEventListener('play', () => {
     if (playIcon) playIcon.textContent = 'DAYAN';
-    if (status) status.textContent = `${track.name} səsləndirilir`;
+    if (status) status.textContent = 'Səs səsləndirilir';
     if (playBtn) playBtn.classList.add('playing');
   });
 
