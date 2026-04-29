@@ -5316,11 +5316,23 @@ function handleProfilePhoto(event) {
   event.target.value = ''; // reset
 }
 
-async function removeProfilePhoto() {
-  if (!await appConfirm('Profil şəklinizi silmək istəyirsiniz?', 'Şəkli sil')) return;
+function removeProfilePhoto() {
   const profile = loadProfile();
   profile.photo = null;
-  saveProfile(profile);
+
+  try {
+    if ((profile.name || '').trim()) {
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    } else {
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
+    }
+  } catch (e) {
+    localStorage.removeItem(PROFILE_STORAGE_KEY);
+  }
+
+  const input = document.getElementById('profilePhotoInput');
+  if (input) input.value = '';
+
   renderProfileInModal();
 }
 
