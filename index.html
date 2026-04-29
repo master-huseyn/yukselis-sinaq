@@ -902,7 +902,7 @@
   .print-only { display: none; }
   
   @media print {
-    @page { size: A4; margin: 14mm 14mm 18mm 14mm; }
+    @page { size: A4; margin: 8mm 8mm 10mm 8mm; }
     body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .container { max-width: 100% !important; padding: 0 !important; box-shadow: none !important; }
     .header, .footer, .resume-banner, .about-modal-bg,
@@ -911,6 +911,29 @@
     .print-only { display: block !important; }
     .print-only * { box-shadow: none !important; }
     a { color: inherit; text-decoration: none; }
+    .report-page { max-width: 100% !important; font-size: 12px !important; line-height: 1.35 !important; }
+    .report-header { gap: 16px !important; padding-bottom: 12px !important; margin-bottom: 14px !important; }
+    .report-photo, .report-photo-placeholder { width: 84px !important; height: 84px !important; border-width: 3px !important; }
+    .report-name { font-size: 22px !important; margin-bottom: 4px !important; }
+    .report-subtitle { font-size: 12px !important; margin-bottom: 4px !important; }
+    .report-meta { font-size: 11px !important; line-height: 1.45 !important; }
+    .report-section { margin-bottom: 12px !important; }
+    .report-section-title { font-size: 11px !important; padding-bottom: 3px !important; margin-bottom: 8px !important; }
+    .report-score-card { padding: 14px 16px !important; margin-bottom: 10px !important; border-radius: 10px !important; }
+    .report-score-num { font-size: 34px !important; margin-bottom: 2px !important; }
+    .report-score-num small { font-size: 16px !important; }
+    .report-score-label { font-size: 12px !important; }
+    .report-grade { font-size: 28px !important; padding: 6px 16px !important; }
+    .report-stats-grid { gap: 8px !important; margin-bottom: 0 !important; }
+    .report-stat { padding: 8px 6px !important; }
+    .report-stat-num { font-size: 18px !important; margin-bottom: 2px !important; }
+    .report-stat-label { font-size: 10px !important; }
+    .report-block-table { font-size: 11px !important; }
+    .report-block-table th { padding: 7px 8px !important; font-size: 10px !important; }
+    .report-block-table td { padding: 8px !important; }
+    .report-block-table .block-bar { height: 6px !important; margin-top: 3px !important; }
+    .report-grade-box { padding: 10px 12px !important; font-size: 11px !important; line-height: 1.45 !important; }
+    .report-footer { margin-top: 12px !important; padding-top: 8px !important; font-size: 9px !important; line-height: 1.35 !important; }
   }
   
   /* CV stilli hesabat */
@@ -4909,6 +4932,11 @@ function getGradeInfo(percent) {
   return { grade: 'F', label: 'Ciddi hazırlıq tələb olunur', cls: 'low' };
 }
 
+function formatReportDate(date) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 function buildReportHTML() {
   const profile = loadProfile();
   const userName = state.userName || profile.name || 'Namizəd';
@@ -4939,10 +4967,7 @@ function buildReportHTML() {
   
   const gradeInfo = getGradeInfo(percent);
   const now = new Date();
-  const dateStr = now.toLocaleString('az-AZ', {
-    year: 'numeric', month: 'long', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
+  const dateStr = formatReportDate(now);
   
   const photoHTML = profile.photo
     ? `<img src="${profile.photo}" alt="${userName}" class="report-photo">`
@@ -4966,13 +4991,13 @@ function buildReportHTML() {
   // Tövsiyə
   let recommendation = '';
   if (percent >= 85) {
-    recommendation = '🎯 Mükəmməl bir nəticədir. Real imtahana hazır vəziyyətdəsiniz. Səhv etdiyiniz az sayda mövzunu yenidən nəzərdən keçirin və psixoloji hazırlığa diqqət yetirin.';
+    recommendation = '🎯 Mükəmməl nəticədir. Yalnız zəif qalan mövzuları qısa şəkildə təkrar edin və bu templə davam edin.';
   } else if (percent >= 70) {
-    recommendation = '👍 Yaxşı nəticədir. Bal sərhədini keçmək üçün uğurlu vəziyyətdəsiniz, lakin səhv etdiyiniz blokların mövzularını dərinləşdirin və mütəmadi hazırlığa davam edin.';
+    recommendation = '👍 Yaxşı nəticədir. Səhv etdiyiniz blokları hədəfli şəkildə gücləndirsəniz, nəticəniz daha da yüksələcək.';
   } else if (percent >= 55) {
-    recommendation = '📚 Hələ inkişaf etmək lazımdır. Xüsusilə zəif olduğunuz blokları diqqətlə təhlil edin, izahlara baxın və bu blokları təkrar həll edin. Müntəzəm hazırlıq nəticəni ciddi şəkildə yaxşılaşdıracaq.';
+    recommendation = '📚 İnkişaf üçün zəif blokları təhlil edin, izahlara baxın və həmin bölmələri yenidən həll edin.';
   } else {
-    recommendation = '⚠️ Ciddi hazırlıq lazımdır. Hər blok üzrə əsas mövzuları sistematik şəkildə öyrənmək, kitabları və açıq mənbələri istifadə etmək tövsiyə olunur. "Səhvlərimi təkrar həll et" funksiyasından mütəmadi istifadə edin.';
+    recommendation = '⚠️ Ciddi hazırlıq lazımdır. Əsas mövzuları sistemli şəkildə oxuyun və səhv sualları mütəmadi təkrar edin.';
   }
   
   const recCls = gradeInfo.cls;
